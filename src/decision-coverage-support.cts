@@ -60,6 +60,27 @@ export function decisionMentioned(haystack: string | null | undefined, decision:
 
 // ─── File reading ─────────────────────────────────────────────────────────────
 
+// #4939: loadPlanContents answers [] for a path that is not there, and [] reads
+// as "no plan cites anything" — so a phase-dir argument that names no directory
+// (the phase NUMBER in the phase-dir slot) must be told apart BEFORE the scan.
+// Answers null for a directory, else what is wrong with the path and what to do
+// about it. Like the plan gate's contextKind (#4794), the message names the real
+// stat outcome: a permission or I/O failure (EACCES, ELOOP, EIO) is reported as
+// unreadable, not as a missing directory. Only ENOENT/ENOTDIR mean the path is not there.
+export function phaseDirProblem(dirPath: string): { reason: string; what: string; hint: string } | null {
+  const passDirectory = 'Pass the phase DIRECTORY (e.g. .planning/phases/01-slug), not the phase number.';
+  let st: fs.Stats;
+  try {
+    st = fs.statSync(dirPath);
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException)?.code;
+    if (code === 'ENOENT' || code === 'ENOTDIR') return { reason: 'phase directory not found', what: 'does not exist', hint: passDirectory };
+    return { reason: 'phase directory unreadable', what: `could not be read (${code ?? 'stat failed'})`, hint: 'Check that the directory is readable.' };
+  }
+  if (st.isDirectory()) return null;
+  return { reason: 'phase path is not a directory', what: st.isFile() ? 'is a file, not a directory' : 'is not a directory', hint: passDirectory };
+}
+
 export function loadPlanContents(phaseDir: string): string[] {
   if (!fs.existsSync(phaseDir)) return [];
   // #3183 (lint-plan-count-drift): source live plan files from the single

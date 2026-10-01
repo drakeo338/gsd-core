@@ -1364,6 +1364,12 @@ The handler returns JSON:
   "uncovered": [{ "id": "D-01", "text": "...", "category": "..." }], "message": "..." }
 ```
 
+On a caller error (`reason` is `"context path is not a file"`,
+`"could-not-parse"`, `"phase directory not found"`,
+`"phase path is not a directory"` or `"phase directory unreadable"`), `total` and `covered`
+are `null` and `uncovered` is omitted: nothing was measured. `passed` is
+still `false`.
+
 **If `passed` is true (or `skipped` is true):** Display
 `✓ Decision coverage: {M}/{N} decisions covered` (or `(skipped)`) and proceed
 to step 13b.
