@@ -40,8 +40,9 @@ fi
 
 The handler returns JSON `{ skipped, blocking: false, total, honored,
 not_honored: [...], message }`, plus `reason` on a skip or a caller error. On a
-caller error (`reason` is `'could-not-parse'`, `'phase directory not
-found'`, `'phase path is not a directory'` or `'phase directory unreadable'`), `total` and `honored` are `null` and `not_honored` is `[]`:
+caller error (`reason` is `'could-not-parse'`, `'phase directory not found'`,
+`'phase path is not a directory'` or `'phase directory unreadable'`), `total`
+and `honored` are `null` and `not_honored` is `[]`:
 nothing was checked, so there is no count to report.
 
 **Reporting:** Append the handler's `message` (a `### Decision Coverage`

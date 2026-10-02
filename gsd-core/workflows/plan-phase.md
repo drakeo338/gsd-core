@@ -1366,9 +1366,11 @@ The handler returns JSON:
 
 On a caller error (`reason` is `"context path is not a file"`,
 `"could-not-parse"`, `"phase directory not found"`,
-`"phase path is not a directory"` or `"phase directory unreadable"`), `total` and `covered`
-are `null` and `uncovered` is omitted: nothing was measured. `passed` is
-still `false`.
+`"phase path is not a directory"` or `"phase directory unreadable"`),
+`total` and `covered` are `null` and `uncovered` is omitted: nothing was
+measured. `passed` is still `false`. The one exception is
+`"missing context path argument"`, which answers `total: 0, covered: 0`
+with an empty `uncovered` list.
 
 **If `passed` is true (or `skipped` is true):** Display
 `✓ Decision coverage: {M}/{N} decisions covered` (or `(skipped)`) and proceed

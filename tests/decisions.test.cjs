@@ -3383,6 +3383,40 @@ describe('#4939: decision-coverage with a phase directory that does not exist an
     return JSON.parse(captured || '{}');
   }
 
+  test('#4939: plan gate — an ENOENT stat failure is named as a missing directory', (t) => {
+    const parsed = runGateWithStatFailure(t, 'decision-coverage-plan', 'ENOENT');
+
+    assert.strictEqual(parsed.passed, false, 'the gate must still block');
+    assert.strictEqual(parsed.reason, 'phase directory not found', `got: ${JSON.stringify(parsed)}`);
+    assert.strictEqual(parsed.covered, null, 'covered must be null — nothing was measured');
+  });
+
+  test('#4939: verify gate — an ENOENT stat failure is named as a missing directory', (t) => {
+    const parsed = runGateWithStatFailure(t, 'decision-coverage-verify', 'ENOENT');
+
+    assert.strictEqual(parsed.blocking, false, 'verify stays non-blocking');
+    assert.strictEqual(parsed.reason, 'phase directory not found', `got: ${JSON.stringify(parsed)}`);
+    assert.strictEqual(parsed.honored, null, 'honored must be null — nothing was measured');
+    assert.strictEqual(parsed.total, null, 'total must be null — nothing was measured');
+  });
+
+  test('#4939: plan gate — an ENOTDIR stat failure is named as a missing directory', (t) => {
+    const parsed = runGateWithStatFailure(t, 'decision-coverage-plan', 'ENOTDIR');
+
+    assert.strictEqual(parsed.passed, false, 'the gate must still block');
+    assert.strictEqual(parsed.reason, 'phase directory not found', `got: ${JSON.stringify(parsed)}`);
+    assert.strictEqual(parsed.covered, null, 'covered must be null — nothing was measured');
+  });
+
+  test('#4939: verify gate — an ENOTDIR stat failure is named as a missing directory', (t) => {
+    const parsed = runGateWithStatFailure(t, 'decision-coverage-verify', 'ENOTDIR');
+
+    assert.strictEqual(parsed.blocking, false, 'verify stays non-blocking');
+    assert.strictEqual(parsed.reason, 'phase directory not found', `got: ${JSON.stringify(parsed)}`);
+    assert.strictEqual(parsed.honored, null, 'honored must be null — nothing was measured');
+    assert.strictEqual(parsed.total, null, 'total must be null — nothing was measured');
+  });
+
   test('#4939: plan gate — an EACCES stat failure is named as unreadable, not as a missing directory', (t) => {
     const parsed = runGateWithStatFailure(t, 'decision-coverage-plan', 'EACCES');
 
