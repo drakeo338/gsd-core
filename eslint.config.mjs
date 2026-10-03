@@ -142,6 +142,9 @@ export default tseslint.config(
       'gsd-core/bin/lib/gate-decision-coverage-verify.cjs',
       // #5164 (epic #5056 Phase 7): the evaluation-scope resolver, a gate support module.
       'gsd-core/bin/lib/gate-evaluation-scope.cjs',
+      // #5170 (epic #5056 Phase 8): typed gate evidence and the verdict-to-exit mapping.
+      'gsd-core/bin/lib/gate-evidence.cjs',
+      'gsd-core/bin/lib/gate-exit.cjs',
       'gsd-core/bin/lib/gate-api-coverage-verify-pre.cjs',
       'gsd-core/bin/lib/gate-gap-analysis-plan-post.cjs',
       'gsd-core/bin/lib/gate-predicate.cjs',
@@ -161,6 +164,8 @@ export default tseslint.config(
       'gsd-core/bin/lib/prohibition-enforcement.cjs',
       // #3770: tsc-generated runtime artifact — lint the src/tdd-red-evidence.cts source.
       'gsd-core/bin/lib/tdd-red-evidence.cjs',
+      // #4692: tsc-generated — lint the src/report-parser.cts source.
+      'gsd-core/bin/lib/report-parser.cjs',
       // #4984: tsc-generated — lint the src/pr-branch-patterns.cts source.
       'gsd-core/bin/lib/pr-branch-patterns.cjs',
       // #4984: tsc-generated — lint the src/undo-commit-selection.cts source.

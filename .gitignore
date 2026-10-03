@@ -296,6 +296,8 @@ build/
 /gsd-core/bin/lib/gate-ui-plan.cjs
 /gsd-core/bin/lib/gate-ui-safety.cjs
 /gsd-core/bin/lib/gate-verdict.cjs
+/gsd-core/bin/lib/gate-evidence.cjs
+/gsd-core/bin/lib/gate-exit.cjs
 /gsd-core/bin/lib/gate-verify-command-paths.cjs
 /gsd-core/bin/lib/gate-verify-failure-directions.cjs
 /gsd-core/bin/lib/verify-command-grounding.cjs
@@ -339,6 +341,7 @@ build/
 /gsd-core/bin/lib/host-runtime-detection.cjs
 /gsd-core/bin/lib/task-content-resolution.cjs
 /gsd-core/bin/lib/tdd-red-evidence.cjs
+/gsd-core/bin/lib/report-parser.cjs
 /gsd-core/bin/lib/pr-branch-patterns.cjs
 /gsd-core/bin/lib/undo-commit-selection.cjs
 __pycache__/

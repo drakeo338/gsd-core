@@ -35,6 +35,12 @@
  * `tdd-red-evidence-path-escape` is the one golden NOT captured from the pre-move
  * code: the record path used to be read uncontained, and a path escaping the
  * project directory is now the usage failure every sibling gate raises.
+ *
+ * The four other E6 payload goldens (`tdd-red-evidence-ok`, `-invalid-exit-zero`,
+ * `-invalid-zero-tests`, `-empty-object`) were re-captured from the format-adapter
+ * classifier (#4692): `evidence` gains `matched_test`, `format` and
+ * `report_errors`, and `record.failing_test` names only the matched target.
+ * Verdicts, reasons, stderr and exit codes are unchanged.
  */
 
 const { describe, test, after } = require('node:test');
@@ -127,6 +133,69 @@ describeGroup('E10 predicate', 'E10');
 describeGroup('E11 api-coverage-verify-pre', 'E11');
 describeGroup('auto-mode', 'auto');
 describeGroup('dispatcher', 'dispatch');
+
+// ─── #5170: the exit status follows the verdict (the goldens above pin every arm's exit code) ───
+
+describe('exit status follows the verdict (#5170, ADR-5057 §4)', () => {
+  const UNAVAILABLE = 69;
+  function runById(id) {
+    const spec = arms.find((a) => a.id === id);
+    assert.ok(spec, `${id} is an arm of the catalogue`);
+    const actual = runArm(spec, rootFor(spec.fixture));
+    assert.strictEqual(actual.outcome, 'exited', `${id}: the gate subprocess exited on its own`);
+    return { actual, payload: JSON.parse(actual.stdout) };
+  }
+
+  test('ui-safety-gate with an unresolvable scope: policy unchanged (block:false), JSON unchanged, exit UNAVAILABLE', () => {
+    for (const id of ['r2-ui-safety-gate-missing-phase', 'r2-ui-safety-gate-escapes-planning']) {
+      const { actual, payload } = runById(id);
+      assert.strictEqual(payload.scopeStatus, 'unresolvable', `${id}: the payload still says unresolvable`);
+      assert.strictEqual(payload.block, false, `${id}: block stays the gate's own policy`);
+      assert.strictEqual(actual.exitCode, UNAVAILABLE, `${id}: "could not look" is never exit 0`);
+    }
+  });
+
+  test('the two verify probes that cannot look: JSON status unresolvable unchanged, exit UNAVAILABLE', () => {
+    for (const id of [
+      'verify-command-paths-no-arg',
+      'verify-command-paths-dir-escapes-root',
+      'verify-command-paths-phase-unresolved',
+      'verify-failure-directions-no-arg',
+      'verify-failure-directions-phase-unresolved',
+    ]) {
+      const { actual, payload } = runById(id);
+      assert.strictEqual(payload.status, 'unresolvable', `${id}: status`);
+      assert.strictEqual(typeof payload.readError, 'string', `${id}: readError`);
+      assert.deepStrictEqual(payload.commands, [], `${id}: commands`);
+      assert.strictEqual(actual.exitCode, UNAVAILABLE, `${id}: exit status`);
+    }
+  });
+
+  test('control: a probe that could look exits 0 with its payload', () => {
+    const { actual, payload } = runById('verify-command-paths-dir-flag');
+    assert.notStrictEqual(payload.status, 'unresolvable');
+    assert.strictEqual(actual.exitCode, 0);
+  });
+
+  test('a delivered BLOCKING verdict stays exit 0 (payload mode: the dispatch reads .block from stdout)', () => {
+    for (const id of ['decision-coverage-plan-could-not-parse', 'decision-coverage-plan-uncovered']) {
+      const { actual, payload } = runById(id);
+      assert.strictEqual(payload.passed, false, `${id}: the verdict is negative`);
+      assert.strictEqual(actual.exitCode, 0, `${id}: a delivered verdict is not a command failure`);
+    }
+  });
+
+  test('api-coverage: an unreadable COVERAGE.md and an unreadable plan are UNAVAILABLE; a delivered block is not', () => {
+    for (const id of ['api-coverage-verify-pre-coverage-unreadable', 'api-coverage-verify-pre-scope-read-error']) {
+      const { actual, payload } = runById(id);
+      assert.strictEqual(payload.block, true, `${id}: the fail-closed policy is unchanged`);
+      assert.strictEqual(actual.exitCode, UNAVAILABLE, `${id}: exit status`);
+    }
+    const detected = runById('api-coverage-verify-pre-detected');
+    assert.strictEqual(detected.payload.block, true);
+    assert.strictEqual(detected.actual.exitCode, 0, 'a delivered block is exit 0');
+  });
+});
 
 // ─── R1: the router export surface ────────────────────────────────────────────
 

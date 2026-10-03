@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "count": 295,
+  "count": 301,
   "classes": {
     "ARCH": 1,
     "CI": 2,
@@ -19,7 +19,7 @@
     "PROHIB": 10,
     "RELEASE-NOTES": 31,
     "RULESET": 61,
-    "SEAM": 22,
+    "SEAM": 28,
     "SESSION": 9,
     "WAVE": 5,
     "WORKSTREAM": 5,
@@ -1257,6 +1257,26 @@
       "value": "resolveEvaluationScope(projectDir, unit, options) (src/gate-evaluation-scope.cts) is the single owner of which commits and files a gate or workflow step evaluates (ADR-5057 §4, #5164)"
     },
     {
+      "id": "SEAM.gate-evidence.enforced-by",
+      "klass": "SEAM",
+      "value": "test:tests/gate-evidence.test.cjs"
+    },
+    {
+      "id": "SEAM.gate-evidence.owns",
+      "klass": "SEAM",
+      "value": "Evidence<T> / readTextEvidence / readDirEvidence / verdictFromEvidence (src/gate-evidence.cts) is the single owner of found-versus-none-versus-unreadable for a gate read (ADR-5057 §4, #5170)"
+    },
+    {
+      "id": "SEAM.gate-exit.enforced-by",
+      "klass": "SEAM",
+      "value": "test:tests/gate-exit.test.cjs"
+    },
+    {
+      "id": "SEAM.gate-exit.owns",
+      "klass": "SEAM",
+      "value": "gateExitOutcome / declareGateExit (src/gate-exit.cts) is the single owner of the exit status a gate verdict projects to; declareOutcome (src/cli-exit.cts) is the only writer of the pending-outcome cell besides output() (ADR-5057 §4, #5170)"
+    },
+    {
       "id": "SEAM.gate-verdict.enforced-by",
       "klass": "SEAM",
       "value": "test:tests/gate-verdict.test.cjs"
@@ -1315,6 +1335,16 @@
       "id": "SEAM.shellcmdproj-win-binary-resolution.owns",
       "klass": "SEAM",
       "value": "Windows binary resolution (resolveExecutableBinary, projectSpawnInvocation) — which file a declared command name actually names, and cmd.exe mediation"
+    },
+    {
+      "id": "SEAM.test-report-adapter.enforced-by",
+      "klass": "SEAM",
+      "value": "test:tests/report-parser.property.test.cjs"
+    },
+    {
+      "id": "SEAM.test-report-adapter.owns",
+      "klass": "SEAM",
+      "value": "parseTestReport(output) (src/report-parser.cts) is the single owner of turning a test report into individual results; the RED-evidence policy consumes its contract and parses no report text (#4692)"
     },
     {
       "id": "SEAM.verification-isphasecomplete.enforced-by",
